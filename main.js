@@ -96,6 +96,7 @@ const response =await fetch(url);
 const jsondata = await response.json();
 
 let popup=`
+<strong>Wettervorhersage für ${forecastLabel}</strong>
 <ul>
                 <li>Luftdruck: ${details.air_pressure_at_sea_level} (hPa) </li>
                 <li>Lufttemperatur:${details.air_temperature} (celsius)</li>
@@ -107,6 +108,12 @@ let popup=`
 
 </ul>
 `;
-marker.setPopupConten(popup).openPopup();
+    marker.setPopupContent(popup).openPopup();
+
+    let forecastDate = new Date(jsondata.properties.timeseries[0].time);
+
+    consolelog(forecastDate);
+    let forecastLabel = formatDate(forecastDate);
+    console.log(forecastLabel);
 };
 loadWeather("https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=47.267222&lon=11.392778");
