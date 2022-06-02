@@ -38,13 +38,10 @@ let formatDate = function(date) {
     }) + " Uhr";
 }
 
-// Windvorhersage
+// Windvorhersage:
 async function loadWind(url) {
     const response = await fetch(url);
     const jsondata = await response.json();
-    //console.log("Jsondaten", jsondata);
-    //console.log("Zeitpunkt Erstellung", jsondata[0].header.refTime);
-    //console.log("Zeitpunkt Vorhersage (+Stunden)", jsondata[0].header.forecastTime);
 
     let forecastDate = new Date(jsondata[0].header.refTime);
     //console.log("Echtes Datum Erstellung", forecastDate);
@@ -59,71 +56,66 @@ async function loadWind(url) {
     L.velocityLayer({
         data: jsondata,
         lineWidth: 2,
-        displayOptions:{
+        displayOptions: {
             velocityType: "",
             directionString: "Windrichtung",
             speedString: "Windgeschwindigkeit",
             speedUnit: "k/h",
             emptyString: "keine Daten vorhanden",
             position: "bottomright"
-            
         }
     }).addTo(overlays.wind);
 };
 loadWind("https://geographie.uibk.ac.at/webmapping/ecmwf/data/wind-10u-10v-europe.json");
 
 // Wettervorhersage
-layerControl.addOverlay(overlays.weather, "Wettervorhersage met. no");
+layerControl.addOverlay(overlays.weather, "Wettervorhersage met.no");
 
 let marker = L.circleMarker([
-    47.26722, 11.392778
-]).bindPopup("Wettervorhersage").addTo(overlays.weather)
-
-//marker positionieren
-/*marker.setLatLng ([
-    jsondata.geometry.coordinates[0],
-    jsondata.geometry.coordinates[1],
-
-]);*/
-
-let details=jsondata.properties.timeseries[0].data.instant.details;
-//console.log("Aktuelle Wetterdaten", details);
-
-
+    47.267222, 11.392778
+]).bindPopup("Wettervorhersage").addTo(overlays.weather);
 
 async function loadWeather(url) {
-const response =await fetch(url);
-const jsondata = await response.json();
+    const response = await fetch(url);
+    const jsondata = await response.json();
 
-let popup=`
-<strong>Wettervorhersage für ${forecastLabel}</strong>
-<ul>
-                <li>Luftdruck: ${details.air_pressure_at_sea_level} (hPa) </li>
-                <li>Lufttemperatur:${details.air_temperature} (celsius)</li>
-                <li>Bewölung: ${details.cloud_area_fraction} (%)</li>
-                <li>Niederschlag: ${details.precipitation_amount} (mm)</li>
-                <li>Relative Luftfeuchtigkeit:${details.relative_humidity} (%)</li>
-                <li>Windrichtung: ${details.wind_from_direction} (degrees)</li>
-                <li>Windgeschwindigkeit: ${details.wind_speed} (km/h)</li>
+ // Marker positionieren
+    marker.setLatLng([
+        jsondata.geometry.coordinates[1],
+        jsondata.geometry.coordinates[0]
+    ]);
 
-</ul>
-`;
-    marker.setPopupContent(popup).openPopup();
+    let details = jsondata.properties.timeseries[0].data.instant.details;
+    //console.log("Aktuelle Wetterdaten", details);
 
     let forecastDate = new Date(jsondata.properties.timeseries[0].time);
-
-    consolelog(forecastDate);
+    //console.log(forecastDate);
     let forecastLabel = formatDate(forecastDate);
-    console.log(forecastLabel);
+    //console.log(forecastLabel);
+
+    let popup = `
+        <strong>Wettervorhersage für ${forecastLabel}</strong>
+        <ul>
+            <li>Luftdruck: ${details.air_pressure_at_sea_level} (hPa)</li>
+            <li>Luftemperatur: ${details.air_temperature} (°C)</li>
+            <li>Bewölkung: ${details.cloud_area_fraction} (%)</li>
+            <li>Niederschlag: ${details.precipitation_amount} (mm)</li>
+            <li>Relative Luftfeuchtigkeit: ${details.relative_humidity} (%)</li>
+            <li>Windrichtung: ${details.wind_from_direction} (°)</li>
+            <li>Windgeschwindigkeit: ${details.wind_speed * 3.6} (km/h)</li>
+        </ul>
+    `;
+
+    marker.setPopupContent(popup).openPopup();
 };
 loadWeather("https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=47.267222&lon=11.392778");
 
-    //bei Klick auf Karte reagieren:
-    map.on("click", function (evtl)
-    {
+// auf Klick auf die Karte reagieren
+map.on("click", function(evt) {
     //console.log(evt);
 
-    let url=`https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=${evtl.latlng.lat}&lon=${evtl.latlng.lng}`
+    let url = `https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=${evt.latlng.lat}&lon=${evt.latlng.lng}`;
+    //console.log(url);
 
     loadWeather(url);
-    });
+});
