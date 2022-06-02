@@ -58,7 +58,7 @@ async function loadWind(url) {
 
     L.velocityLayer({
         data:jsondata
-    })
+    }).addTo(overlays.wind);
 };
 loadWind("https://geographie.uibk.ac.at/webmapping/ecmwf/data/wind-10u-10v-europe.json");
 
