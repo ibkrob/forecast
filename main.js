@@ -60,7 +60,12 @@ async function loadWind(url) {
         data:jsondata,
         lineWidth: 2,
         displayOptions:{
-            velocityType:"",
+            velocityType: "",
+            directionString: "Windrichtung",
+            speedString: "Windgeschwindigkeit",
+            speedUnit: "k/h",
+            emptyString: "keine Daten vorhanden",
+            position: "bottomright"
             
         }
     }).addTo(overlays.wind);
@@ -68,14 +73,15 @@ async function loadWind(url) {
 loadWind("https://geographie.uibk.ac.at/webmapping/ecmwf/data/wind-10u-10v-europe.json");
 
 // Wettervorhersage
-async function loadWeather(url) {
-const response =await fetch(url);
-const jsondata = await response.json();
-
 layerControl.addOverlay(overlays.weather, "Wettervorhersage met. no");
 
 let marker = L.circleMarker([
     47.26722, 11.392778
 ]).bindPopup("Wettervorhersage").addTo(overlays.weather)
+
+
+async function loadWeather(url) {
+const response =await fetch(url);
+const jsondata = await response.json();
 };
 loadWeather("https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=47.267222&lon=11.392778");
