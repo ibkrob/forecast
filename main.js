@@ -57,7 +57,7 @@ async function loadWind(url) {
     layerControl.addOverlay(overlays.wind, `ECMWF Windvorhersage für ${forecastLabel}`)
 
     L.velocityLayer({
-        data:jsondata,
+        data: jsondata,
         lineWidth: 2,
         displayOptions:{
             velocityType: "",
@@ -80,11 +80,11 @@ let marker = L.circleMarker([
 ]).bindPopup("Wettervorhersage").addTo(overlays.weather)
 
 //marker positionieren
-marker.setLatLng ([
+/*marker.setLatLng ([
     jsondata.geometry.coordinates[0],
     jsondata.geometry.coordinates[1],
 
-]);
+]);*/
 
 let details=jsondata.properties.timeseries[0].data.instant.details;
 //console.log("Aktuelle Wetterdaten", details);
@@ -117,3 +117,13 @@ let popup=`
     console.log(forecastLabel);
 };
 loadWeather("https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=47.267222&lon=11.392778");
+
+    //bei Klick auf Karte reagieren:
+    map.on("click", function (evtl)
+    {
+    //console.log(evt);
+
+    let url=`https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=${evtl.latlng.lat}&lon=${evtl.latlng.lng}`
+
+    loadWeather(url);
+    });
