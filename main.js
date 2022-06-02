@@ -27,6 +27,13 @@ const layerControl = L.control.layers({
 L.control.scale({
     imperial: false
 }).addTo(map);
+a
+
+// Datum formatieren
+let formatDate= function(date) {
+    return date.toLocaleDateString();
+    month:
+}
 
 // Windvorhersage
 async function loadWind(url) {
@@ -39,7 +46,7 @@ async function loadWind(url) {
     let forecastDate=new Date (jsondata[0].header.refTime);
     //console.log(forecastDate)
     forecastDate.setHours(forecastDate.getHours() + jsondata[0].header.forecastTime);
-
+    console.log()
 };
 loadWind("https://geographie.uibk.ac.at/webmapping/ecmwf/data/wind-10u-10v-europe.json");
 
